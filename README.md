@@ -1,6 +1,6 @@
 # docscan
 
-Document analyzer for teacheres
+Document analyzer for teachers
 
 This tool is a document analyzer for teachers to create material, analyze files, grade files, etc. using LLMs
 
