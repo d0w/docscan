@@ -7,9 +7,16 @@ export const login = async (credentials: LoginCredentials) => {
   formData.append('username', credentials.username);
   formData.append('password', credentials.password);
 
-  const response = await fetch(`${API_URL}/auth/token`, {
+  const response = await fetch(`/api/auth/token`, {
     method: 'POST',
-    body: formData,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      grant_type: "password",
+      username: credentials.username,
+      password: credentials.password
+    })
   });
 
   if (!response.ok) {
@@ -21,7 +28,7 @@ export const login = async (credentials: LoginCredentials) => {
 };
 
 export const signup = async (data: SignupData) => {
-  const response = await fetch(`${API_URL}/auth/signup`, {
+  const response = await fetch(`/api/auth/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -38,7 +45,7 @@ export const signup = async (data: SignupData) => {
 };
 
 export const getCurrentUser = async (token: string) => {
-  const response = await fetch(`${API_URL}/users/me`, {
+  const response = await fetch(`/api/users/me`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

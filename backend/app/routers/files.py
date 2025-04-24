@@ -3,10 +3,13 @@ from app.routers.auth import get_current_user
 from fastapi.responses import FileResponse
 from fastapi import APIRouter, HTTPException, Depends
 import uuid
+import logging
 
 from sqlmodel import Session
 
 from ..models import File, Submission, Assignment, User
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/files",
@@ -34,10 +37,10 @@ async def get_file(
     if not submission:
         raise HTTPException(status_code=404, detail="Submission not found")
 
-    assignment = session.get(Assignment, submission.assignment_id)
-    if not assignment:
-        raise HTTPException(status_code=404, detail="Assignment not found")
+    assignment = submission.assignment
+    print(submission.student_id == user.id)
 
+    logger.debug(submission, assignment)
     if user.role == "teacher" and assignment.teacher_id != user.id:
         raise HTTPException(
             status_code=403, detail="You do not have permission to access this file"

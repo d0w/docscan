@@ -33,10 +33,8 @@ export interface Assignment {
   title: string;
   description: string;
   dueDate: string;
-  classroomId: string;
-  files: File[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Classroom {
@@ -60,3 +58,5 @@ export interface SignupData {
   password: string;
   role: UserRole;
 }
+
+

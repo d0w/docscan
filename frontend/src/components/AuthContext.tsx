@@ -29,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       try {
         const user = await getCurrentUser(token);
+        console.log("User from token:", user)
         setState({
           user,
           token,
@@ -57,7 +58,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { access_token } = await apiLogin(credentials);
       localStorage.setItem('token', access_token);
 
+
+      console.log("Access_token:", access_token);
       const user = await getCurrentUser(access_token);
+      console.log("Loading user:", user)
 
       setState({
         user,

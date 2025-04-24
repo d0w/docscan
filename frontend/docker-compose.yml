@@ -18,6 +18,9 @@ services:
     #   - CHOKIDAR_USEPOLLING=true
     command: ["npm", "run", "dev", "--", "--host" ]
 
+    networks:
+      - backend_dev-net
+
   vite-react-app-prod:
     build:
       context: .
@@ -25,3 +28,7 @@ services:
       target: production
     ports:
       - "80:80"
+
+networks:
+  backend_dev-net:
+    external: true

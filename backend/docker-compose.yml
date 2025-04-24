@@ -5,6 +5,8 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+    volumes:
+      - uploads:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -18,6 +20,9 @@ services:
           target: /app
         - action: rebuild
           path: requirements.txt
+
+    networks:
+      - dev-net
 
   db:
     image: postgres:15
@@ -36,7 +41,13 @@ services:
       timeout: 2s
       retries: 5
 
+    networks:
+      - dev-net
+
 volumes:
   postgres_data:
+  uploads:
 
-      
+networks:
+  dev-net:
+    driver: bridge
