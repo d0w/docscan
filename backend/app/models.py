@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Annotated, Optional, List
 import uuid
 from enum import Enum
 from datetime import datetime
@@ -100,6 +100,12 @@ class AssignmentCreate(AssignmentBase):
     pass
 
 
+class AssignmentPopulated(AssignmentBase):
+    id: uuid.UUID | None = None
+    submissions: List["SubmissionPopulated"] = []
+    teacher: UserPublic | None = None
+
+
 class AssignmentUpdate(AssignmentBase):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -119,8 +125,12 @@ class Submission(SubmissionBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     student: User = Relationship(back_populates="submissions")
 
-    analytics_id: uuid.UUID = Field(foreign_key="analytics.id")
-    analytics: Optional["Analytics"] = Relationship(back_populates="submission")
+    analytic_id: Optional[uuid.UUID] = Field(
+        default=None,
+        foreign_key="analytic.id",
+        unique=True,
+    )
+    analytic: Optional["Analytic"] = Relationship()
 
     assignment: "Assignment" = Relationship(back_populates="submissions")
     files: List["File"] = Relationship(back_populates="submission")
@@ -130,12 +140,13 @@ class SubmissionCreate(SubmissionBase):
     pass
 
 
-class SubmissionPublic(SubmissionBase):
+class SubmissionPopulated(SubmissionBase):
     id: uuid.UUID | None = None
     student_id: uuid.UUID
-    student: User
-    commeht: str | None = None
+    student: UserPublic
+    comment: str | None = None
     files: List["File"] | None = None
+    analytic: Optional["Analytic"] = None
 
 
 class FileBase(SQLModel):
@@ -154,6 +165,7 @@ class FileBase(SQLModel):
 class File(FileBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     filepath: str = Field(...)
+    content_type: str = Field(...)
 
     submission: Optional["Submission"] = Relationship(back_populates="files")
 
@@ -169,13 +181,17 @@ class FileCreate(FileBase):
     pass
 
 
-class AnalyticsBase(SQLModel):
-    submission_id: Optional[uuid.UUID] = Field(
-        default=None, foreign_key="submission.id"
-    )
+class FilePopulated(FileBase):
+    id: uuid.UUID | None = None
+    submission_id: uuid.UUID | None = None
+    filepath: str | None = None
+    submission: SubmissionPopulated | None = None
+    content_type: str | None = None
 
 
-class Analytics(AnalyticsBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    submission: Optional["Submission"] = Relationship(back_populates="analytics")
+class AnalyticBase(SQLModel):
     data: Optional[dict] = Field(default=None, sa_column=Column(JSON))
+
+
+class Analytic(AnalyticBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)

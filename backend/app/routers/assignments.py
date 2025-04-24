@@ -16,7 +16,13 @@ import tempfile
 import shutil
 from ..models import File, FileCreate
 from ..models import User
-from ..models import Assignment, AssignmentCreate, AssignmentUpdate
+from ..models import (
+    Assignment,
+    AssignmentCreate,
+    AssignmentUpdate,
+    AssignmentPopulated,
+    SubmissionPopulated,
+)
 from ..database import get_session
 from app.models import Submission
 from app.routers.auth import get_current_user
@@ -108,6 +114,7 @@ async def create_submission(
                         filepath=perm_path,
                         size=os.path.getsize(perm_path),
                         submission_id=submission.id,
+                        content_type=content_type,
                     )
 
                     session.add(file_record)
@@ -186,12 +193,12 @@ async def get_assignments(
     # )  # bad line of code
 
 
-@router.get("/{assignment_id}", response_model=Assignment)
+@router.get("/{assignment_id}", response_model=AssignmentPopulated)
 async def get_assignment(
     assignment_id: uuid.UUID,
     session: Session = Depends(get_session),
     user: User = Depends(get_current_user),
-):
+) -> AssignmentPopulated:
     assignment = session.get(Assignment, assignment_id)
 
     if not assignment:
@@ -206,10 +213,14 @@ async def get_assignment(
             status_code=403, detail="You are not authorized to view this assignment"
         )
 
-    return assignment
+    return Assignment(
+        **assignment.model_dump(),
+        teacher=assignment.teacher,
+        submissions=assignment.submissions,
+    )
 
 
-@router.get("/{assignment_id}/submissions", response_model=List[Submission])
+@router.get("/{assignment_id}/submissions", response_model=List[SubmissionPopulated])
 async def get_assignment_submissions(
     assignment_id: uuid.UUID,
     session: Session = Depends(get_session),

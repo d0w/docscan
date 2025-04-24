@@ -13,9 +13,16 @@ import os
 import uuid
 import tempfile
 import shutil
-from ..models import File, FileCreate
-from ..models import User
-from ..models import Assignment, AssignmentCreate, AssignmentUpdate
+from ..models import (
+    Analytic,
+    File,
+    FileCreate,
+    User,
+    Assignment,
+    AssignmentCreate,
+    AssignmentUpdate,
+    SubmissionPopulated,
+)
 from ..database import get_session
 from app.models import Submission
 from app.routers.auth import get_current_user
@@ -33,3 +40,32 @@ router = APIRouter(
         500: {"description": "Internal server error"},
     },
 )
+
+
+@router.post("/", response_model=SubmissionPopulated, status_code=201)
+async def create_analytic(
+    submission_id: uuid.UUID,
+    session: Session = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> SubmissionPopulated:
+    # create analytic under current user
+    analytic_dict = Analytic(id=uuid.uuid4(), data={})
+
+    submission = session.get(Submission, submission_id)
+    if not submission:
+        raise HTTPException(status_code=404, detail="Submission not found")
+
+    if user.role != "teacher" or user.id != submission.assignment.teacher_id:
+        raise HTTPException(
+            status_code=403, detail="Only teachers can create analytics"
+        )
+
+    submission.analytic = analytic_dict
+
+    session.add(analytic_dict)
+    session.add(submission)
+    session.commit()
+    session.refresh(submission)
+    session.refresh(analytic_dict)
+
+    return submission
