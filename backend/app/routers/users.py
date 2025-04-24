@@ -1,7 +1,7 @@
 import uuid
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Any
-from ..models.UserModel import UserCreate, UserPublic, User
+from ..models import UserCreate, UserPublic, User
 
 from sqlmodel import select
 

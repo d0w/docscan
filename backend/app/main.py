@@ -7,7 +7,7 @@ from typing import Annotated
 from . import models
 from .database import create_db_and_tables, get_session
 
-from .routers import users, auth
+from .routers import users, auth, assignments
 
 load_dotenv()
 
@@ -17,6 +17,7 @@ app = FastAPI()
 
 app.include_router(users.router)
 app.include_router(auth.router)
+app.include_router(assignments.router)
 
 
 @app.on_event("startup")

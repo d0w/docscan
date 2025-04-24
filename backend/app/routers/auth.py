@@ -4,7 +4,7 @@ from sqlmodel import select
 import uuid
 from pydantic import BaseModel
 
-from app.models.UserModel import UserCreate, UserPublic, User, RoleEnum
+from app.models import UserCreate, UserPublic, User, RoleEnum
 from ..database import SessionDep, get_session
 from datetime import datetime, timedelta, timezone
 
@@ -60,6 +60,7 @@ async def get_current_user(
 ) -> User:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
         user_id: uuid.UUID = uuid.UUID(payload.get("sub"))
         if user_id is None:
             raise HTTPException(
