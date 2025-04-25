@@ -1,0 +1,87 @@
+services:
+  # Backend services
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    command: fastapi dev main.py --host 0.0.0.0 --port 8000
+    restart: always
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/app
+          target: /app
+        - action: rebuild
+          path: ./backend/requirements.txt
+    networks:
+      - dev-net
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+    networks:
+      - dev-net
+
+  # Frontend services
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    restart: always
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /app/src
+        - action: rebuild
+          path: ./frontend/package.json
+    ports:
+      - "5173:5173"
+    command: ["npm", "run", "dev", "--", "--host"]
+    networks:
+      - dev-net
+    depends_on:
+      - api
+
+  # frontend-prod:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     target: production
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     - dev-net
+  #   depends_on:
+  #     - api
+  #   # Comment out this service when developing locally
+  #   profiles: ["production"]
+
+volumes:
+  postgres_data:
+  uploads:
+
+networks:
+  dev-net:
+    driver: bridge

@@ -42,14 +42,14 @@ router = APIRouter(
 )
 
 
-@router.post("/submit", response_model=Submission, status_code=201)
+@router.post("/submit", response_model=SubmissionPopulated, status_code=201)
 async def create_submission(
     assignment_id: uuid.UUID = Form(...),
     comment: str = Form(None),
     files: List[UploadFile] = None,
     session: Session = Depends(get_session),
     user: User = Depends(get_current_user),
-) -> Submission:
+) -> SubmissionPopulated:
     if user.role != "student":
         raise HTTPException(
             status_code=403, detail="Only students can submit assignments"

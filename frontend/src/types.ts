@@ -32,6 +32,7 @@ export interface Assignment {
   id: string;
   title: string;
   description: string;
+  students?: User[];
   dueDate: string;
   createdAt?: string;
   updatedAt?: string;

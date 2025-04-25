@@ -3,9 +3,9 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Any
 from ..models import UserCreate, UserPublic, User
 
-from sqlmodel import select
+from sqlmodel import select, Session
 
-from ..database import SessionDep
+from ..database import SessionDep, get_session
 from .auth import get_current_user
 
 router = APIRouter(
@@ -22,6 +22,18 @@ router = APIRouter(
 @router.get("/me", response_model=User)
 async def get_me(user: User = Depends(get_current_user)) -> User:
     return user
+
+
+@router.get("/students", response_model=list[UserPublic])
+async def get_students(
+    session: Session = Depends(get_session), user: User = Depends(get_current_user)
+) -> list[UserPublic]:
+    if user.role != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can view students")
+
+    students = session.exec(select(User).where(User.role == "student")).all()
+
+    return students
 
 
 @router.get("/{user_id}", response_model=UserPublic)

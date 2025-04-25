@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../components/AuthContext';
 import { useNavigate } from 'react-router';
 
 const LoginPage: React.FC = () => {
-  const { login, error, isLoading } = useAuth();
+  const { login, error, isLoading, isAuthenticated } = useAuth();
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login(credentials);
 
-    if (!error) {
-      navigate("/dashboard")
-    }
   };
 
   return (

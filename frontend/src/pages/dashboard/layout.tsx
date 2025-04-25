@@ -38,7 +38,7 @@ const DashboardLayout: React.FC = () => {
               <>
                 <li>
                   <NavLink
-                    to="/dashboard/assignments"
+                    to="/dashboard"
                     className="text-accent hover:text-accent-hover"
                   >
                     {({ isActive }) => (
@@ -47,20 +47,32 @@ const DashboardLayout: React.FC = () => {
                     }
                   </NavLink>
                 </li>
+                {/* <li> */}
+                {/*   <NavLink */}
+                {/*     to="/dashboard/upload" */}
+                {/*     className="text-accent hover:text-accent-hover" */}
+                {/*   > */}
+                {/*     {({ isActive }) => ( */}
+                {/*       <span className={`${isActive ? "text-text-primary" : ""}`}>Upload Assignment</span> */}
+                {/*     ) */}
+                {/*     } */}
+                {/*   </NavLink> */}
+                {/* </li> */}
+              </>
+            ) : (
+              <>
                 <li>
+
                   <NavLink
-                    to="/dashboard/upload"
+                    to="/dashboard"
                     className="text-accent hover:text-accent-hover"
                   >
                     {({ isActive }) => (
-                      <span className={`${isActive ? "text-text-primary" : ""}`}>Upload Assignment</span>
+                      <span className={`${isActive ? "text-text-primary" : ""}`}>Assignments</span>
                     )
                     }
                   </NavLink>
                 </li>
-              </>
-            ) : (
-              <>
                 <li>
                   <NavLink
                     to="/dashboard/createassignment"
@@ -84,19 +96,19 @@ const DashboardLayout: React.FC = () => {
 
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink
-                    to="/dashboard/document-scanner"
-                    className="text-accent hover:text-accent-hover"
-                  >
-
-                    {({ isActive }) => (
-                      <span className={`${isActive ? "text-text-primary" : ""}`}>Analyze Document</span>
-                    )
-                    }
-
-                  </NavLink>
-                </li>
+                {/* <li> */}
+                {/*   <NavLink */}
+                {/*     to="/dashboard/document-scanner" */}
+                {/*     className="text-accent hover:text-accent-hover" */}
+                {/*   > */}
+                {/**/}
+                {/*     {({ isActive }) => ( */}
+                {/*       <span className={`${isActive ? "text-text-primary" : ""}`}>Analyze Document</span> */}
+                {/*     ) */}
+                {/*     } */}
+                {/**/}
+                {/*   </NavLink> */}
+                {/* </li> */}
               </>
             )}
           </ul>
