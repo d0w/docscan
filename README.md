@@ -6,6 +6,8 @@ This tool is a document analyzer for teachers to create material, analyze files,
 
 Currently, the application is only able to analyze text based files such as .txt and .pdf. Images are not supported yet.
 
+A demo of the application is [here](https://youtu.be/C5ZB9GgojCc)
+
 # Getting Started
 
 **Prerequisites**
