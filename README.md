@@ -37,6 +37,9 @@ The preferred setup since there are many components.
 
 2. Head to `localhost:5174` to view the frontend
 3. Head to `localhost:8000/docs` to view the API documentation
+4. Start your Ollama server by running `ollama serve`
+    - Your ollama server should be running on the same network as the docker containers. I.e. you need to bind the server to your computer's local IP or on 0.0.0.0
+    - Download and fetch `deepseek-r1:8b`. This is currently the model hardcoded, configurable environments variables to control this will be added in the future.
 
 If you want to run the frontend and backend separately:
 
