@@ -44,10 +44,48 @@ services:
     networks:
       - dev-net
 
+  backendtestdb:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+
+    networks:
+      - test-net
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - TEST_DATABASE_URL=postgresql://postgres:postgres@backendtestdb:5432/postgres
+      - LLM_API_URL=http://localhost:11434/api/generate
+    depends_on:
+      backendtestdb:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+
+    networks:
+      - test-net
+
 volumes:
   postgres_data:
   uploads:
 
 networks:
   dev-net:
+    driver: bridge
+  test-net:
     driver: bridge
