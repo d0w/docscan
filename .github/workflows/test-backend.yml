@@ -51,7 +51,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./backend
-          file: ./Dockerfile.test
+          file: ./backend/Dockerfile.test
           load: true
           tags: backend-test:latest
           cache-from: type=gha
@@ -69,5 +69,5 @@ jobs:
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
-          file: ./coverage.xml
+          file: ./backend/coverage.xml
           fail_ci_if_error: false
