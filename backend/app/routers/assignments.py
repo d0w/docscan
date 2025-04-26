@@ -307,3 +307,28 @@ async def update_assignment(
     session.refresh(assignment)
 
     return assignment
+
+
+@router.get(
+    "/{assignment_id}/submissions/{submission_id}", response_model=SubmissionPopulated
+)
+async def get_assignment_submission(
+    assignment_id: uuid.UUID,
+    submission_id: uuid.UUID,
+    session: Session = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> SubmissionPopulated:
+    submission = session.get(Submission, submission_id)
+
+    if user.role == "teacher":
+        if submission.assignment.teacher_id != user.id:
+            raise HTTPException(
+                status_code=403, detail="You are not authorized to view this submission"
+            )
+    if user.role == "student":
+        if submission.student_id != user.id:
+            raise HTTPException(
+                status_code=403, detail="You are not authorized to view this submission"
+            )
+
+    return submission

@@ -52,8 +52,50 @@ async def llm_analyze(
     file_record: File, prompt: str = "Please summarize this file"
 ) -> dict:
     file_path = file_record.filepath
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
-        file_content = file.read()
+    file_content = ""
+
+    # Check if it's a PDF file
+    if file_record.filename.lower().endswith(".pdf"):
+        try:
+            # Using pypdf to extract text from PDF
+            import pypdf
+
+            with open(file_path, "rb") as pdf_file:
+                pdf_reader = pypdf.PdfReader(pdf_file)
+                for page_num in range(len(pdf_reader.pages)):
+                    page = pdf_reader.pages[page_num]
+                    page_text = page.extract_text()
+                    if page_text:
+                        file_content += page_text + "\n\n"
+
+                if not file_content.strip():
+                    file_content = "This PDF appears to contain no extractable text content. It may consist of scanned images."
+        except ImportError:
+            logger.error(
+                "pypdf library not installed. Please install it to analyze PDF files."
+            )
+            return {
+                "status": 500,
+                "file_name": file_record.filename,
+                "prompt": prompt,
+                "analysis": "Error: pypdf library required for PDF analysis is not installed.",
+            }
+        except Exception as e:
+            logger.error(f"Error extracting text from PDF: {str(e)}")
+            file_content = f"Error extracting text from PDF: {str(e)}"
+    else:
+        # Handle text files as before
+        try:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
+                file_content = file.read()
+        except Exception as e:
+            logger.error(f"Error reading file: {str(e)}")
+            return {
+                "status": 500,
+                "file_name": file_record.filename,
+                "prompt": prompt,
+                "analysis": f"Error reading file: {str(e)}",
+            }
 
     file_type = (
         file_record.content_type if file_record.content_type is not None else "text"
@@ -93,7 +135,7 @@ async def llm_analyze(
             result.get("response", ""),
             flags=re.DOTALL,
         )
-        print(cleaned_analysis)
+
         return {
             "status": response.status_code,
             "file_name": file_record.filename,
@@ -102,13 +144,77 @@ async def llm_analyze(
         }
 
     except Exception as e:
-        print(f"Error during LLM analysis: {str(e)}")
+        logger.error(f"Error during LLM analysis: {str(e)}")
         return {
             "status": 500,
             "file_name": file_record.filename,
             "prompt": prompt,
             "analysis": f"Error: {str(e)}",
         }
+
+
+# async def llm_analyze(
+#     file_record: File, prompt: str = "Please summarize this file"
+# ) -> dict:
+#     file_path = file_record.filepath
+#     with open(file_path, "r", encoding="utf-8", errors="ignore") as file:
+#         file_content = file.read()
+#         print(file_content)
+#
+#     file_type = (
+#         file_record.content_type if file_record.content_type is not None else "text"
+#     )
+#
+#     try:
+#         logger.info(
+#             f"Sending request to LLM API: {LLM_API_URL} for file {file_record.filename}"
+#         )
+#
+#         llm_prompt = (
+#             f"{prompt}\n\nFile Type: {file_type}\n\nFile Content:\n{file_content}"
+#         )
+#
+#         print(LLM_API_URL)
+#
+#         async with httpx.AsyncClient(timeout=httpx.Timeout(30.0)) as client:
+#             response = await client.post(
+#                 LLM_API_URL,
+#                 json={"model": "deepseek-r1:8b", "prompt": llm_prompt, "stream": False},
+#             )
+#
+#         if response.status_code != 200:
+#             logger.error(f"LLM API returned status code {response.status_code}")
+#             return {
+#                 "status": response.status_code,
+#                 "file_name": file_record.filename,
+#                 "prompt": prompt,
+#                 "analysis": "Error: Failed to get response from LLM",
+#             }
+#
+#         result = response.json()
+#
+#         cleaned_analysis = re.sub(
+#             r"<think\b[^>]*>.*?</think>",
+#             "",
+#             result.get("response", ""),
+#             flags=re.DOTALL,
+#         )
+#         print(cleaned_analysis)
+#         return {
+#             "status": response.status_code,
+#             "file_name": file_record.filename,
+#             "prompt": prompt,
+#             "analysis": cleaned_analysis.strip(),
+#         }
+#
+#     except Exception as e:
+#         print(f"Error during LLM analysis: {str(e)}")
+#         return {
+#             "status": 500,
+#             "file_name": file_record.filename,
+#             "prompt": prompt,
+#             "analysis": f"Error: {str(e)}",
+#         }
 
 
 @router.post("/", response_model=SubmissionPopulated, status_code=201)

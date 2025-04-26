@@ -14,6 +14,7 @@ import StudentAssignment from './pages/dashboard/student/assignment'
 import TeacherAssignment from './pages/dashboard/teacher/assignment'
 import CreateAssignment from './pages/dashboard/teacher/createassignment'
 import Submissions from './pages/dashboard/teacher/submissions'
+import Submission from './pages/dashboard/teacher/submission'
 
 
 const DashboardRedirect = () => {
@@ -69,6 +70,7 @@ function App() {
             <Route path="assignments/:assignmentId" element={<AssignmentRedirect />} />
             <Route path="createassignment" element={<CreateAssignment />} />
             <Route path="submissions" element={<Submissions />} />
+            <Route path="assignments/:assignmentId/submissions/:submissionId" element={<Submission />} />
 
           </Route>
         </Routes>

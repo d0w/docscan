@@ -85,7 +85,7 @@ const TeacherDashboard = () => {
                     </p>
                   </div>
                   <Link
-                    to={`/dashboard/teacher/assignments/${assignment.id}`}
+                    to={`/dashboard/assignments/${assignment.id}`}
                     className="px-3 py-1 bg-accent hover:bg-accent-hover text-text-primary text-sm rounded"
                   >
                     View Submissions

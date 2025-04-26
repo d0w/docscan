@@ -11,6 +11,15 @@ export interface User {
   role: UserRole;
 }
 
+export interface Submission {
+  id: string;
+  student: User;
+  files: File[];
+  grade?: number;
+  feedback?: string;
+}
+
+
 export interface AuthState {
   user: User | null;
   token: string | null;
@@ -23,19 +32,17 @@ export interface File {
   id: string;
   filename: string;
   filepath: string;
-  ownerId: string;
-  createdAt: string;
-  updatedAt: string;
+  submissionId?: string;
+  contentType?: string;
 }
 
 export interface Assignment {
   id: string;
   title: string;
   description: string;
-  students?: User[];
+  studentIds: string[];
   dueDate: string;
-  createdAt?: string;
-  updatedAt?: string;
+  submissions?: Submission[];
 }
 
 export interface Classroom {

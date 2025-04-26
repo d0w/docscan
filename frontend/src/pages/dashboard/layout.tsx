@@ -84,18 +84,18 @@ const DashboardLayout: React.FC = () => {
                     }
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink
-                    to="/dashboard/submissions"
-                    className="text-accent hover:text-accent-hover"
-                  >
-                    {({ isActive }) => (
-                      <span className={`${isActive ? "text-text-primary" : ""}`}>Student Submissions</span>
-                    )
-                    }
-
-                  </NavLink>
-                </li>
+                {/* <li> */}
+                {/*   <NavLink */}
+                {/*     to="/dashboard/submissions" */}
+                {/*     className="text-accent hover:text-accent-hover" */}
+                {/*   > */}
+                {/*     {({ isActive }) => ( */}
+                {/*       <span className={`${isActive ? "text-text-primary" : ""}`}>Student Submissions</span> */}
+                {/*     ) */}
+                {/*     } */}
+                {/**/}
+                {/*   </NavLink> */}
+                {/* </li> */}
                 {/* <li> */}
                 {/*   <NavLink */}
                 {/*     to="/dashboard/document-scanner" */}

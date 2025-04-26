@@ -82,7 +82,7 @@ const SubmissionsPage = () => {
     <div className="p-6 max-w-6xl mx-auto">
       <div className="mb-6 flex items-center">
         <button
-          onClick={() => navigate('/dashboard/teacher')}
+          onClick={() => navigate('/dashboard/')}
           className="mr-4 text-text-muted hover:text-text-primary transition-colors"
         >
           ← Back to Dashboard

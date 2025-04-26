@@ -4,6 +4,8 @@ Document analyzer for teachers
 
 This tool is a document analyzer for teachers to create material, analyze files, grade files, etc. using LLMs
 
+Currently, the application is only able to analyze text based files such as .txt and .pdf. Images are not supported yet.
+
 # Getting Started
 
 **Prerequisites**
