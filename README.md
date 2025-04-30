@@ -33,12 +33,12 @@ The preferred setup since there are many components.
     - `docker compose down` to stop the containers
     - `docker compose down --volumes` to stop the containers and remove the volumes
     - `docker compose watch` to watch for changes in the code and rebuild the containers
-    - This creates a backend, frontend, and PostgreSQL container onto a shared docker network that they use to communicate as if on localhost
+    - This creates a backend, frontend, and PostgreSQL container onto a shared docker network that they use to communicate
 
 2. Head to `localhost:5174` to view the frontend
 3. Head to `localhost:8000/docs` to view the API documentation
 4. Start your Ollama server by running `ollama serve`
-    - Your ollama server should be running on the same network as the docker containers. I.e. you need to bind the server to your computer's local IP or on 0.0.0.0
+    - Your ollama server should be running on the same network as the docker containers. I.e. you need to bind the server to your computer's local IP/0.0.0.0 or add an ollama container on the same network bridge.
     - Download and fetch `deepseek-r1:8b`. This is currently the model hardcoded, configurable environments variables to control this will be added in the future.
 
 If you want to run the frontend and backend separately:
